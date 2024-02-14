@@ -1,0 +1,14 @@
+Webserver stating with:
+``` go run ./cmd/web/ -addr=":4000" ```
+
+
+
+
+
+Generate a TLS Cert with
+```
+ cd $HOME/code/snippetbox
+ mkdir tls
+ cd tls
+```
+ go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost

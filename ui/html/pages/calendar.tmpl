@@ -1,0 +1,72 @@
+{{define "title"}}Calendar{{end}}
+{{define "main"}}
+<head>
+    <meta charset='utf-8' />
+</head>
+<h2>Calendar</h2>
+
+{{if .Calendars}}
+<div id="calPeriod">
+    <select id="calMonth"></select>
+    <input type="number" id="calYear">
+</div>
+
+<div id="calWrap"></div>
+
+<dialog id="calForm"><form method="dialog">
+    <div id="evtClose">X</div>
+    <h2 style="visibility: collapse" > CALENDAR EVENT</h2>
+    <label style="visibility: collapse" >Date</label>
+    <input style="visibility: collapse" type="text" id="evtDate" readonly>
+    <label style="visibility: collapse">Details</label>
+    <textarea style="visibility: collapse" id="evtTxt" required></textarea>
+    <input style="visibility: collapse" id="evtDel" type="button" value="Delete">
+    <input style="visibility: collapse" id="evtSave" type="submit" value="Save">
+</form></dialog>
+
+
+<script nonce="2726c7f26c">
+    localStorage.clear()
+    data = []
+    cal.init()
+{{range .Calendars}}
+
+    day = Array.from('{{humanDate .Event_time}}')[0] + Array.from('{{humanDate .Event_time}}')[1];
+    year = Array.from('{{.Event_time}}')[0] + Array.from('{{.Event_time}}')[1] + Array.from('{{.Event_time}}')[2] + Array.from('{{.Event_time}}')[3];
+    month = Array.from('{{.Event_time}}')[5] + Array.from('{{.Event_time}}')[6];
+
+
+    month = parseInt(month)
+    if (Array.from('{{.Event_time}}')[5] === 0) {
+        month = Array.from('{{.Event_time}}')[6]
+    }
+    month = month - 1
+
+    day = parseInt(day)
+    if (Array.from('{{.Event_time}}')[0] === 0) {
+        day=  Array.from('{{humanDate .Event_time}}')[1]
+    }
+
+    cal.data = localStorage.getItem("cal-" + month + "-" + year);
+    if (cal.data==null) {
+        localStorage.setItem("cal-" + month + "-" + year, "{}");
+        cal.data = {};
+    } else {
+        cal.data = JSON.parse(cal.data);
+    }
+    cal.sMth = month
+    cal.sYear = year
+    cal.sDay = day
+
+    cal.data[day] = '<a href="/snippet/view/{{.Snippets_id}}" title="{{.Title}}">{{.Title}}</a>'
+    localStorage.setItem(`cal-${month}-${year}`, JSON.stringify(cal.data));
+    cal.draw();
+    cal.hFormWrap.close();
+
+{{end}}
+</script>
+{{else}}
+<p>There's nothing to see here... yet!</p>
+{{end}}
+{{end}}
+
