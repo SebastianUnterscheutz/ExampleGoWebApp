@@ -8,7 +8,6 @@ import (
 type UserModel struct{}
 
 func (m *UserModel) PasswordUpdate(id int, currentPassword, newPassword string) error {
-	//TODO implement me
 	panic("implement me")
 }
 

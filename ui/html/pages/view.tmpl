@@ -11,7 +11,12 @@
         <!-- Use the new template function here -->
         <time>Created: {{humanDate .Created}}</time>
         <time>Expires: {{humanDate .Expires}}</time>
+        {{end}}
+    </div>
+    <div class='metadata'>
+        {{with .User}}
+        <p>User Name: {{.Name}}</p>
+        {{end}}
     </div>
 </div>
-{{end}}
 {{end}}

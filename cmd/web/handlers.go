@@ -60,9 +60,15 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := app.users.Get(snippet.Owner)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+
 	flash := app.sessionManager.PopString(r.Context(), "flash")
 
 	data := app.newTemplateData(r)
+	data.User = user
 	data.Snippet = snippet
 	data.Flash = flash
 
@@ -86,6 +92,9 @@ type snippetCreateForm struct {
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+
+	userId := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -119,14 +128,10 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	id, err := app.snippets.Insert(form.Title, form.Content, form.Expires)
+	id, err := app.snippets.Insert(form.Title, form.Content, userId, form.Expires)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
-	}
-
-	userId := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
-	if id == 0 {
 	}
 
 	if validator.InTimePast(in) {
